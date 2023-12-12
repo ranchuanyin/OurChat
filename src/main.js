@@ -1,6 +1,5 @@
-
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import {createApp} from 'vue'
+import {createPinia} from 'pinia'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import App from './App.vue'
@@ -15,7 +14,7 @@ app.use(router)
 app.use(ElementPlus, {
     locale: zhCn,
 })
-axios.defaults.baseURL = "http://localhost:8080"
+axios.defaults.baseURL = "https://www.ourcats.top:8080"
 axios.defaults.headers.common["Authorization"] = localStorage.getItem("SCHOOL_CAT_TOKEN")
 
 app.use(createPinia().use(piniaPluginPersistedstate))

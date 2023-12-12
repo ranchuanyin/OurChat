@@ -32,8 +32,8 @@
   }
   const websocketConnect = () => {
     if (window.WebSocket) {
-      socket = new WebSocket("ws://127.0.0.1:58080/webSocket")
-       getMessage()
+      socket = new WebSocket("wss://www.ourcats.top/webSocket")
+        getMessage()
       // 相当于channel的read事件，ev 收到服务器回送的消息
       socket.onmessage = function (ev) {
         let message = JSON.parse(ev.data)

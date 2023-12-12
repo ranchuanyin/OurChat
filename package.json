@@ -1,13 +1,13 @@
 {
   "name": "myvue-e",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "main": "electron/main.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "electron": "wait-on tcp:5173 && electron .",
+    "electron": "wait-on tcp:5173 &&  electron .",
     "electron:serve": "concurrently -k \"npm run dev\" \"npm run electron\"",
     "electron:build": "vite build && electron-builder"
   },
@@ -32,10 +32,13 @@
   },
   "build": {
     "appId": "com.dweb.demo",
-    "productName": "ElectronApp",
-    "copyright": "Copyright © 2021 <your-name>",
+    "productName": "OurChat",
+    "copyright": "Copyright © 2023 chuanyin",
     "mac": {
       "category": "public.app-category.utilities"
+    },
+    "win": {
+      "icon": "icon.jpg"
     },
     "nsis": {
       "oneClick": false,

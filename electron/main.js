@@ -3,9 +3,7 @@ const {app, BrowserWindow, Menu, Tray, ipcMain} = require('electron')
 const path = require('path')
 let mainWindow = null;
 let tray = null;
-process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
-
-const NODE_ENV = process.env.NODE_ENV  //新增
+ //新增
 //const NODE_ENV = 'development'
 function createWindow() {
   Menu.setApplicationMenu(null)
@@ -23,15 +21,10 @@ function createWindow() {
 
   // 加载 index.html
   // mainWindow.loadFile('dist/index.html') 将该行改为下面这一行，加载url
-  mainWindow.loadURL(
-      NODE_ENV === 'development'
-          ? 'http://localhost:5173'
-          :`file://${path.join(__dirname, '../dist/index.html')}`
-  ); // 新增
+  //mainWindow.loadURL(`file://${path.join(__dirname, '../dist/index.html')}`);
+  mainWindow.loadURL('http://localhost:5173'); // 新增
   // 打开开发工具
-  if (NODE_ENV === "development") {
-    mainWindow.webContents.openDevTools()
-  } //这里改成自己的项目启动端口
+  //这里改成自己的项目启动端口
 
   mainWindow.on('close', (event) => {
     // 阻止窗口关闭

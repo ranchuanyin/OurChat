@@ -1,10 +1,11 @@
 <template>
       <el-row style="width: 100vw;height: 100vh;overflow: hidden">
-        <el-col :sm="14" :md="17" :lg="17" :xl="17" class="hidden-xs-only" :span="18">
-          <div  style="flex: 1;">
-            <el-image fit="cover"
-                      src="/img/重工小猫.png" style="width: 60vw;height: 100vh;"></el-image>
-          </div>
+        <el-col :lg="17" :md="17" :sm="14" :span="18" :xl="17" class="hidden-xs-only" style="height: 100%">
+            <div style="flex: 1;">
+                <el-image fit="cover"
+                          src="https://www.ourcatimg.top/avatar/2257a3401d59fa5f2985f75796ed6e0f.jpg"
+                          style="width: 100%;height: 100%;"></el-image>
+            </div>
         </el-col>
 
         <el-divider class="hidden-xs-only" border-style="double" direction="vertical" style="height: 100%"/>
