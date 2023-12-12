@@ -11,6 +11,8 @@
 
   const store = useStore();
   const messageList = store.messageList
+  const { ipcRenderer } = require('electron');
+
   let client;
   let socket;
   // 判断当前浏览器是否支持webSocket
@@ -36,6 +38,7 @@
       socket.onmessage = function (ev) {
         let message = JSON.parse(ev.data)
         if (message.message !== undefined) {
+          ipcRenderer.send('vue-message', 'Hello from Vue!')
           if (!store.userList.userList.some(one => one.id == message.fromUserId)) {
             let find = store.friendList.friendList.find(one => one.id == message.fromUserId);
             if (find == null) {

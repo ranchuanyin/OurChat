@@ -1,4 +1,4 @@
-const {app, BrowserWindow, Menu, Tray} = require('electron')
+const {app, BrowserWindow, Menu, Tray,ipcMain } = require('electron')
 
 const path = require('path')
 let mainWindow = null ;
@@ -69,14 +69,12 @@ function createTray(){
 
   tray.setToolTip('你的应用名称');
   tray.setContextMenu(contextMenu);
-  app.setBadgeCount(store.message)
   // 添加一个点击托盘图标关闭应用的监听
   tray.on('click', () => {
     if (mainWindow.isVisible()) {
       mainWindow.hide();
     } else {
       mainWindow.show();
-      app.setBadgeCount(0);
     }
   });
 
@@ -86,6 +84,9 @@ function createTray(){
 // 和创建浏览器窗口的时候调用
 // 部分 API 在 ready 事件触发后才能使用。
 app.whenReady().then(() => {
+  ipcMain.on('vue-message', (event, data) => {
+    console.log('Received message from Vue:', data);
+  });
   createWindow()
   createTray()
   app.on('activate', function () {

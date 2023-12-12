@@ -1,13 +1,50 @@
-<template >
+<template>
   <div style="padding: 0;background-color: white;">
     <el-row style="height: 100%;">
-
       <el-col :span="2" style="background-color : #e4e4e4;">
         <el-row align="top" style="height: 100%">
           <el-col style="height: 10%">
-            <el-row justify="center">
-              <el-avatar :src="store.auth.user.avatar" style="margin-top: 35%"/>
-            </el-row>
+            <el-popover
+                :width="300"
+                popper-style="box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 20px;"
+            >
+              <template #reference>
+                <el-row justify="center">
+                  <el-avatar :src="store.auth.user.avatar" style="margin-top: 35%"/>
+                </el-row>
+              </template>
+              <template #default>
+                <div
+                    class="demo-rich-conent"
+                    style="display: flex; gap: 16px; flex-direction: column"
+                >
+                  <el-avatar
+                      :size="60"
+                      src="https://avatars.githubusercontent.com/u/72015883?v=4"
+                      style="margin-bottom: 8px"
+                  />
+                  <div>
+                    <p
+                        class="demo-rich-content__name"
+                        style="margin: 0; font-weight: 500"
+                    >
+                      Element Plus
+                    </p>
+                    <p
+                        class="demo-rich-content__mention"
+                        style="margin: 0; font-size: 14px; color: var(--el-color-info)"
+                    >
+                      @element-plus
+                    </p>
+                  </div>
+
+                  <p class="demo-rich-content__desc" style="margin: 0">
+                    Element Plus, a Vue 3 based component library for developers,
+                    designers and product managers
+                  </p>
+                </div>
+              </template>
+            </el-popover>
           </el-col>
           <el-col style="height: 16%">
             <el-row justify="center" @click="showUser">
@@ -57,8 +94,8 @@
         <el-row style="margin-top: 1vh;">
           <el-divider style="margin: 0;width: 20vw;"/>
         </el-row>
-        <Transition name="slide-fade">
-          <div v-show="showUserList">
+        <n-scrollbar v-if="showUserList" style="max-height: 90vh">
+          <div>
             <el-row v-for="user in store.userList.userList" :key="user.id" style="height: 11vh;"
                     :class="{active: isActive === user.id}" class="message" @click="getUser(user)">
               <el-col :span="6" style="padding-left: 5%">
@@ -74,10 +111,10 @@
               </el-col>
             </el-row>
           </div>
-        </Transition>
+        </n-scrollbar>
         <!----------------->
-        <Transition name="slide-fade">
-          <div v-show="showFriendList">
+        <n-scrollbar v-if="showFriendList" style="max-height: 90vh">
+          <div>
             <el-row v-for="user in store.friendList.friendList" align="middle" style="height: 11vh;"
                     class="message" @dblclick="getFriend(user)">
               <el-col :span="6" style="padding-left: 5%">
@@ -89,7 +126,7 @@
               </el-col>
             </el-row>
           </div>
-        </Transition>
+        </n-scrollbar>
       </el-col>
       <el-col :span="17" style="background-color: #f0f0f0;">
         <ChatBox :messageList="messageList" :user="user"/>
@@ -103,7 +140,7 @@ import {useStore} from "@/stores"
 import {reactive, ref} from "vue";
 import {Search} from "@element-plus/icons-vue";
 import ChatBox from "@/components/ChatBox.vue";
-import {NBadge} from "naive-ui";
+import {NBadge, NScrollbar} from "naive-ui";
 
 const store = useStore()
 const props = defineProps(["messageList"])
