@@ -1,15 +1,16 @@
-const {app, BrowserWindow, Menu, Tray,ipcMain } = require('electron')
+const {app, BrowserWindow, Menu, Tray, ipcMain} = require('electron')
 
 const path = require('path')
-let mainWindow = null ;
+let mainWindow = null;
 let tray = null;
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 
-//const NODE_ENV = process.env.NODE_ENV  //新增
-const NODE_ENV = 'development'
+const NODE_ENV = process.env.NODE_ENV  //新增
+//const NODE_ENV = 'development'
 function createWindow() {
   Menu.setApplicationMenu(null)
   // 创建浏览器窗口
-    mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     minWidth: 900,
     minHeight: 600,
     webPreferences: {

@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHistory} from 'vue-router'
 import {useStore} from "@/stores";
 
 const router = createRouter({
@@ -35,7 +35,6 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const store = useStore()
-    console.log(to.name)
     if (store.auth.user != null && to.name.startsWith('welcome-')) {
         next('/message')
     } else if (store.auth.user == null && to.fullPath.startsWith('/message')) {
