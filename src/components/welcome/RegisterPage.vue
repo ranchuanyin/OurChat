@@ -1,10 +1,18 @@
 <template>
-    <div style="text-align: center;margin: 0 20px">
-        <div style="margin-top: 15vh;">
-            <div style="font-size: 25px;margin-bottom: 5vh;font-weight: bold">注册新用户</div>
-            <div style="font-size: 14px;color: grey">欢迎注册</div>
-        </div>
-        <div style="margin-top: 30px">
+    <el-row align="middle">
+        <el-col style="margin-top: 5vh;">
+            <el-row justify="space-between">
+                <el-col :span="5">
+                </el-col>
+                <el-col :span="14" style="text-align: center">
+                    <div style="font-size: 2vw;margin-bottom: 2vh;font-weight: bold">注册新用户</div>
+                    <div style="font-size: 14px;color: grey">欢迎注册</div>
+                </el-col>
+                <el-col :span="5">
+                </el-col>
+            </el-row>
+        </el-col>
+        <el-col style="margin-top: 5vh">
             <el-form ref="formRef" :model="form" :rules="rules" @validate="onValidDate">
                 <el-form-item prop="username">
                     <el-input v-model="form.username" :maxlength="8" :minlength="2" placeholder="用户名" type="text">
@@ -45,7 +53,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="code">
-                  <el-input v-model="form.code" :maxlength="6" :minlength="6" placeholder="输入验证码" type="code">
+                    <el-input v-model="form.code" :maxlength="6" :minlength="6" placeholder="输入验证码" type="code">
                         <template #prefix>
                             <el-icon>
                                 <EditPen/>
@@ -58,17 +66,35 @@
                     </el-input>
                 </el-form-item>
             </el-form>
-        </div>
-        <div style="margin-top: 5vh">
-            <el-button style="width: 10vw" type="warning" @click="register()">立即注册</el-button>
-        </div>
+        </el-col>
+        <el-col style="margin-top: 5vh">
+            <el-row justify="space-between">
+                <el-col :span="5">
+
+                </el-col>
+                <el-col :span="8">
+                    <el-button style="width: 10vw" type="warning" @click="register()">立即注册</el-button>
+                </el-col>
+                <el-col :span="5">
+
+                </el-col>
+            </el-row>
+        </el-col>
         <el-divider>
             <span style="color: grey;font-size: 10px">已有账号</span>
         </el-divider>
-        <div>
-            <el-link style="font-size: 14px" type="primary" @click="router.push('/')">立即登录</el-link>
-        </div>
-    </div>
+        <el-col>
+            <el-row justify="space-between">
+                <el-col :span="5">
+                </el-col>
+                <el-col :span="8" style="text-align: center">
+                    <el-link style="font-size: 14px" type="primary" @click="router.push('/')">立即登录</el-link>
+                </el-col>
+                <el-col :span="5">
+                </el-col>
+            </el-row>
+        </el-col>
+    </el-row>
 </template>
 
 <script setup>
@@ -127,9 +153,9 @@ const isEmailValid = ref(true)
 const EmailMessage = ref("获取验证码")
 let countDown = ref(60)
 const validateEmail = () => {
-  if (form.email === null || form.email === "") {
-    return ElMessage.warning("请输入邮箱")
-  }
+    if (form.email === null || form.email === "") {
+        return ElMessage.warning("请输入邮箱")
+    }
     if (!isEmailValid)
         return
     isEmailValid.value = false

@@ -1,15 +1,18 @@
-const {app, BrowserWindow, Menu, Tray, ipcMain} = require('electron')
+const {app, BrowserWindow, Menu, Tray, ipcMain, nativeImage} = require('electron')
 
 const path = require('path')
 let mainWindow = null;
 let tray = null;
- //新增
+let timer = null;
+let icon = path.join(__dirname, 'icon.jpg')
+
+//新增
 //const NODE_ENV = 'development'
 function createWindow() {
   Menu.setApplicationMenu(null)
   // 创建浏览器窗口
   mainWindow = new BrowserWindow({
-    minWidth: 900,
+    minWidth: 1000,
     minHeight: 600,
     webPreferences: {
       nodeIntegration: true,
@@ -40,11 +43,11 @@ function createWindow() {
   });
 
   // 打开开发工具
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 }
 
 function createTray(){
-  tray = new Tray(path.join(__dirname, 'icon.jpg'))
+  tray = new Tray(icon)
   const contextMenu = Menu.buildFromTemplate([
     {
       label: '打开应用',
@@ -64,25 +67,43 @@ function createTray(){
   tray.setToolTip('你的应用名称');
   tray.setContextMenu(contextMenu);
   // 添加一个点击托盘图标关闭应用的监听
-  tray.on('click', () => {
-    if (mainWindow.isVisible()) {
-      mainWindow.hide();
-    } else {
-      mainWindow.show();
-    }
-  });
-
 }
 
 // 这段程序将会在 Electron 结束初始化
 // 和创建浏览器窗口的时候调用
 // 部分 API 在 ready 事件触发后才能使用。
 app.whenReady().then(() => {
+  let count = 0
   ipcMain.on('vue-message', (event, data) => {
-    console.log('Received message from Vue:', data);
+    clearInterval(timer)
+    timer = null
+    count = 0
+    if (process.platform === 'win32' || process.platform === 'win64') {
+      tray.displayBalloon({icon: icon, title: data.username, content: data.message})
+    }
+    timer = setInterval(() => {
+      count += 1
+      if (count % 2 === 0) {
+        tray.setImage(icon)
+      } else {
+        tray.setImage(nativeImage.createEmpty()) // 创建一个空的nativeImage实例
+      }
+      tray.setToolTip('您有一条新消息')
+    }, 500)
   });
   createWindow()
   createTray()
+  tray.on('click', () => {
+    if (mainWindow.isVisible()) {
+      mainWindow.hide();
+    } else {
+      mainWindow.show();
+      tray.setImage(icon)
+      clearInterval(timer)
+      timer = null
+      count = 0
+    }
+  });
   app.on('activate', function () {
     // 通常在 macOS 上，当点击 dock 中的应用程序图标时，如果没有其他
     // 打开的窗口，那么程序会重新创建一个窗口。

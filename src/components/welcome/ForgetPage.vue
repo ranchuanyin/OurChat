@@ -81,6 +81,21 @@
                 </div>
             </div>
         </transition>
+
+        <el-divider>
+            <span style="color: grey;font-size: 10px">想起来密码了？</span>
+        </el-divider>
+        <el-col>
+            <el-row justify="space-between">
+                <el-col :span="5">
+                </el-col>
+                <el-col :span="8" style="text-align: center">
+                    <el-link style="font-size: 14px" type="primary" @click="router.push('/')">立即登录</el-link>
+                </el-col>
+                <el-col :span="5">
+                </el-col>
+            </el-row>
+        </el-col>
     </div>
 </template>
 

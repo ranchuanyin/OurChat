@@ -22,9 +22,8 @@
                                 <el-col>
                                     <el-text>{{ one.messageUser }}</el-text>
                                 </el-col>
-                                <div v-if="one.type == 1"
-                                     style="background-color: white;padding: 8px;border-radius: 8px;max-width: 300px;">
-                                    {{ one.message }}
+                                <div v-if="one.type == 1" style="white-space: pre-line;background-color: white;padding: 8px;border-radius: 8px;max-width: 300px;"
+                                     v-html="one.message">
                                 </div>
                                 <n-image v-else-if="one.type == 2"
                                          :src="one.message"
@@ -35,10 +34,8 @@
                     </el-row>
 
                     <el-row v-else-if="one.toUserId == user.id" justify="end" style="margin: 2%">
-                        <div v-if="one.type == 1"
-                             style="background-color: white;padding: 8px;border-radius: 8px;max-width: 300px">
-                            {{ one.message }}
-
+                        <div v-if="one.type == 1" style="white-space: pre-line;;background-color: white;padding: 8px;border-radius: 8px;max-width: 300px"
+                             v-html="one.message">
                         </div>
                         <n-image v-else-if="one.type == 2"
                                  :src="one.message"
@@ -74,9 +71,10 @@
         <V3Emoji
             v-model="messageContent"
             :textArea="true"
+            @keydown.enter.native.prevent="handleEnterKey($event)"
         />
         <el-row justify="end" style="margin-top: 3px">
-            <el-col :span="3" @keyup.enter="clickSendMessage()">
+            <el-col :span="3">
                 <el-button v-show="appear" :disabled="(messageContent == null || messageContent == '')"
                            style="height: 30px;float: right" type="primary" @click="clickSendMessage()">
                     发送
@@ -111,6 +109,7 @@ const message = reactive({
     message: [],
     newMessage: ''
 })
+
 
 class Message {
     // 构造函数，在创建对象时初始化对象的属性
@@ -251,6 +250,14 @@ const handle_success = (response) => {
         }, (data) => {
 
         })
+    }
+}
+
+function handleEnterKey(e) {
+    if (e.ctrlKey && e.keyCode == 13) { //用户点击了ctrl+enter触发
+        messageContent.value += '\n';
+    } else { //用户点击了enter触发
+        clickSendMessage();
     }
 }
 </script>
