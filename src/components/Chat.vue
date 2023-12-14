@@ -1,10 +1,10 @@
 <template>
   <div style="padding: 0;background-color: white;">
     <el-row style="height: 100%;">
-      <el-col :span="2" style="background-color : #e4e4e4;-webkit-app-region: drag;
+      <el-col :span="2" style="background-color : #e4e4e4;">
+        <el-row align="top" style="height: 100%;-webkit-app-region: drag;
   -webkit-user-select: none;">
-        <el-row align="top" style="height: 100%;-webkit-app-region: no-drag">
-          <el-col style="height: 10%">
+          <el-col style="height: 10%;-webkit-app-region: no-drag">
             <el-row justify="center">
               <el-avatar :src="store.auth.user.avatar" style="margin-top: 35%" @click="logout()"/>
             </el-row>
@@ -55,7 +55,7 @@
     -ms-user-select:none;">
         <el-row justify="center" style="padding: 3%;height: 7vh;width: 20vw;">
           <el-input v-model="input" placeholder="搜索" style="width: 10vw;height: 35px;"/>
-          <el-button :icon="Search" style="width: 20px;margin-left: 5px;height: 35px;"/>
+          <el-button @click="openFriend()" :icon="Search" style="width: 20px;margin-left: 5px;height: 35px;"/>
         </el-row>
         <el-row style="margin-top: 1vh;">
           <el-divider style="margin: 0;width: 20vw;"/>
@@ -117,6 +117,8 @@ const messageList = props.messageList
 const showFriendList = ref(false)
 const showUserList = ref(true)
 const isActive = ref('')
+const { ipcRenderer } = require('electron');
+
 const showFriend = () => {
   showUserList.value = false
   showFriendList.value = true
@@ -127,7 +129,6 @@ const logout = () => {
     localStorage.removeItem("SCHOOL_CAT_TOKEN")
     ElMessage.success(data.message)
     router.push('/')
-    localStorage.removeItem(`friendList:${store.auth.user.id}`)
     store.auth.user = null
     store.messageList.length = 0
     store.userList.userList.length = 0
@@ -170,6 +171,10 @@ const getFriend = (one) => {
   store.userList.userList.push(one)
   showUserList.value = true
   showFriendList.value = false
+}
+
+const openFriend = () => {
+  ipcRenderer.send('open-friend-win')
 }
 </script>
 

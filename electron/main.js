@@ -45,6 +45,22 @@ function createWindow() {
   //mainWindow.webContents.openDevTools()
 }
 
+function openNewWindow() {
+  const newWindow = new BrowserWindow({
+    width: 600,
+    height: 400,
+    frame: false,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js')
+    }
+  });
+
+  newWindow.loadURL(`file://${path.join(__dirname, '../dist/index.html#/message')}`);
+  newWindow.webContents.openDevTools()
+}
+
 function createTray(){
   tray = new Tray(path.join(__dirname, 'icon.jpg'))
   const contextMenu = Menu.buildFromTemplate([
@@ -104,6 +120,9 @@ app.whenReady().then(() => {
 //接收关闭命令
   ipcMain.on('window-close', function() {
     mainWindow.hide();
+  })
+  ipcMain.on('open-friend-win', function() {
+    openNewWindow()
   })
   createWindow()
   createTray()

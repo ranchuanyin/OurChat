@@ -1,9 +1,6 @@
 <script setup>
-import {useStore} from "@/stores";
 import {Minus, FullScreen, Close} from "@element-plus/icons-vue";
 import {onMounted} from "vue";
-const store = useStore();
-store.auth.user = null
 const { ipcRenderer } = require('electron');
 
 onMounted(
