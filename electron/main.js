@@ -1,6 +1,7 @@
 const {app, BrowserWindow, Menu, Tray, ipcMain} = require('electron')
-
+let request = require('request')
 const path = require('path')
+const {createWriteStream} = require("fs");
 let mainWindow = null;
 let tray = null;
  //新增
@@ -11,6 +12,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     minWidth: 900,
     minHeight: 600,
+    frame: false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -40,7 +42,7 @@ function createWindow() {
   });
 
   // 打开开发工具
-  // mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
 }
 
 function createTray(){
@@ -78,9 +80,31 @@ function createTray(){
 // 和创建浏览器窗口的时候调用
 // 部分 API 在 ready 事件触发后才能使用。
 app.whenReady().then(() => {
-  ipcMain.on('vue-message', (event, data) => {
-    console.log('Received message from Vue:', data);
+
+  ipcMain.on('avatarList', (event, data) => {
+    for (let i = 0; i < data.length; i++) {
+      console.log(data[i])
+      request(data[i]).pipe(
+          createWriteStream(path.join(__dirname, `avatar/${data[i].match(/\/([^\/?#]+)$/)[1]}`))
+      )
+    }
+
   });
+  ipcMain.on('window-min', function() {
+    mainWindow.minimize();
+  })
+//接收最大化命令
+  ipcMain.on('window-max', function() {
+    if (mainWindow.isMaximized()) {
+      mainWindow.restore();
+    } else {
+      mainWindow.maximize();
+    }
+  })
+//接收关闭命令
+  ipcMain.on('window-close', function() {
+    mainWindow.hide();
+  })
   createWindow()
   createTray()
   app.on('activate', function () {

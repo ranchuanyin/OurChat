@@ -1,6 +1,7 @@
 <template>
       <el-row style="width: 100vw;height: 100vh;overflow: hidden">
-        <el-col :lg="17" :md="17" :sm="14" :span="18" :xl="17" class="hidden-xs-only" style="height: 100%">
+        <el-col :lg="17" :md="17" :sm="14" :span="18" :xl="17" class="hidden-xs-only" style="height: 100%;-webkit-app-region: drag;
+  -webkit-user-select: none;">
             <div style="flex: 1;">
                 <el-image fit="cover"
                           src="https://www.ourcatimg.top/avatar/2257a3401d59fa5f2985f75796ed6e0f.jpg"

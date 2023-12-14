@@ -24,11 +24,16 @@
       }
   )
   const getFriendList = () => {
-     get(`/cat/message/getFriendList/${store.auth.user.id}`, (data) => {
-      store.friendList.friendList = data.data
-     }, (data) => {
+      get(`/cat/message/getFriendList/${store.auth.user.id}`, (data) => {
+        store.friendList.friendList = data.data
+        if (localStorage.getItem(`friendList:${store.auth.user.id}`) == null){
+          let newArray = store.friendList.friendList.map(obj => obj.avatar);
+          ipcRenderer.send("avatarList",newArray)
+          localStorage.setItem(`friendList:${store.auth.user.id}`,'1')
+        }
+      }, (data) => {
 
-     })
+      })
   }
   const websocketConnect = () => {
     if (window.WebSocket) {
