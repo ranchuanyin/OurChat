@@ -2,14 +2,15 @@
   <div style="padding: 0;background-color: white;">
     <el-row style="height: 100%;">
       <el-col :span="2" style="background-color : #e4e4e4;">
-        <el-row align="top" style="height: 100%">
-          <el-col style="height: 10%">
-                <el-row justify="center">
-                  <el-avatar :src="store.auth.user.avatar" style="margin-top: 35%" @click="logout()"/>
-                </el-row>
+        <el-row align="top" style="height: 100%;-webkit-app-region: drag;
+  -webkit-user-select: none;">
+          <el-col style="height: 10%;-webkit-app-region: no-drag">
+            <el-row justify="center">
+              <el-avatar :src="store.auth.user.avatar" style="margin-top: 35%" @click="logout()"/>
+            </el-row>
           </el-col>
-          <el-col style="height: 16%">
-            <el-row justify="center" @click="showUser">
+          <el-col style="height: 16%;-webkit-app-region: no-drag">
+            <el-row style="-webkit-app-region: no-drag" justify="center" @click="showUser">
               <svg class="icon" height="32" p-id="1804" style="margin-top: 35%" t="1700119874796"
                    version="1.1" viewBox="0 0 1024 1024" width="32" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -17,7 +18,7 @@
                     fill="#040000" p-id="1805"></path>
               </svg>
             </el-row>
-            <el-row justify="center" @click="showFriend">
+            <el-row style="-webkit-app-region: no-drag" justify="center" @click="showFriend">
               <svg class="icon" height="32" p-id="6689" style="margin-top: 35%"
                    t="1700136931940"
                    version="1.1" viewBox="0 0 1024 1024" width="32" xmlns="http://www.w3.org/2000/svg">
@@ -48,10 +49,13 @@
         </el-row>
       </el-col>
       <!-----------------------------人物列表----------------------------------->
-      <el-col :span="5" style="background-color: white">
+      <el-col :span="5" style="background-color: white;user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select:none;">
         <el-row justify="center" style="padding: 3%;height: 7vh;width: 20vw;">
           <el-input v-model="input" placeholder="搜索" style="width: 10vw;height: 35px;"/>
-          <el-button :icon="Search" style="width: 20px;margin-left: 5px;height: 35px;"/>
+          <el-button @click="openFriend()" :icon="Search" style="width: 20px;margin-left: 5px;height: 35px;"/>
         </el-row>
         <el-row style="margin-top: 1vh;">
           <el-divider style="margin: 0;width: 20vw;"/>
@@ -113,34 +117,36 @@ const messageList = props.messageList
 const showFriendList = ref(false)
 const showUserList = ref(true)
 const isActive = ref('')
+const { ipcRenderer } = require('electron');
+
 const showFriend = () => {
-    showUserList.value = false
-    showFriendList.value = true
+  showUserList.value = false
+  showFriendList.value = true
 }
 
 const logout = () => {
-    get('/cat/auth/logout', (data) => {
-        store.auth.user = null
-        store.messageList.length = 0
-        store.userList.userList.length = 0
-        store.friendList.friendList.length = 0
-        localStorage.removeItem("SCHOOL_CAT_TOKEN")
-        ElMessage.success(data.message)
-        router.push('/')
-    })
+  get('/cat/auth/logout', (data) => {
+    localStorage.removeItem("SCHOOL_CAT_TOKEN")
+    ElMessage.success(data.message)
+    router.push('/')
+    store.auth.user = null
+    store.messageList.length = 0
+    store.userList.userList.length = 0
+    store.friendList.friendList.length = 0
+  })
 }
 
 const showUser = () => {
-    showUserList.value = true
-    showFriendList.value = false
+  showUserList.value = true
+  showFriendList.value = false
 }
 
 
 const user = reactive({
-    id: '',
-    avatar: '',
-    username: '',
-    isGroup: ''
+  id: '',
+  avatar: '',
+  username: '',
+  isGroup: ''
 })
 
 
@@ -165,6 +171,10 @@ const getFriend = (one) => {
   store.userList.userList.push(one)
   showUserList.value = true
   showFriendList.value = false
+}
+
+const openFriend = () => {
+  ipcRenderer.send('open-friend-win')
 }
 </script>
 

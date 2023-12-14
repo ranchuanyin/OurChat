@@ -1,6 +1,7 @@
-const {app, BrowserWindow, Menu, Tray, ipcMain, nativeImage} = require('electron')
-
+const {app, BrowserWindow, Menu, Tray, ipcMain} = require('electron')
+let request = require('request')
 const path = require('path')
+const {createWriteStream} = require("fs");
 let mainWindow = null;
 let tray = null;
 let timer = null;
@@ -14,6 +15,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     minWidth: 1000,
     minHeight: 600,
+    frame: false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -43,7 +45,23 @@ function createWindow() {
   });
 
   // 打开开发工具
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
+}
+
+function openNewWindow() {
+  const newWindow = new BrowserWindow({
+    width: 600,
+    height: 400,
+    frame: false,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js')
+    }
+  });
+
+  newWindow.loadURL(`file://${path.join(__dirname, '../dist/index.html#/message')}`);
+  newWindow.webContents.openDevTools()
 }
 
 function createTray(){
@@ -73,6 +91,15 @@ function createTray(){
 // 和创建浏览器窗口的时候调用
 // 部分 API 在 ready 事件触发后才能使用。
 app.whenReady().then(() => {
+
+  ipcMain.on('avatarList', (event, data) => {
+    for (let i = 0; i < data.length; i++) {
+      console.log(data[i])
+      request(data[i]).pipe(
+          createWriteStream(path.join(__dirname, `avatar/${data[i].match(/\/([^\/?#]+)$/)[1]}`))
+      )
+    }
+
   let count = 0
   ipcMain.on('vue-message', (event, data) => {
     clearInterval(timer)
@@ -91,6 +118,24 @@ app.whenReady().then(() => {
       tray.setToolTip('您有一条新消息')
     }, 500)
   });
+  ipcMain.on('window-min', function() {
+    mainWindow.minimize();
+  })
+//接收最大化命令
+  ipcMain.on('window-max', function() {
+    if (mainWindow.isMaximized()) {
+      mainWindow.restore();
+    } else {
+      mainWindow.maximize();
+    }
+  })
+//接收关闭命令
+  ipcMain.on('window-close', function() {
+    mainWindow.hide();
+  })
+  ipcMain.on('open-friend-win', function() {
+    openNewWindow()
+  })
   createWindow()
   createTray()
   tray.on('click', () => {
