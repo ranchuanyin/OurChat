@@ -1,6 +1,7 @@
 <script setup>
-import {Minus, FullScreen, Close} from "@element-plus/icons-vue";
+import {Close, FullScreen, Minus} from "@element-plus/icons-vue";
 import {onMounted} from "vue";
+
 const { ipcRenderer } = require('electron');
 
 onMounted(
