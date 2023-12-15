@@ -1,6 +1,7 @@
 <template>
-  <el-row>
-    <div style="text-align: center;margin: 0 20px">
+  <el-row justify="space-between">
+    <el-col :span="1"></el-col>
+    <el-col :span="22" style="text-align: center;">
       <div style="margin-top: 10vh;">
         <div style="font-size: 25px;margin-bottom: 5vh;font-weight: bold">登录</div>
         <div style="font-size: 14px;color: grey">在进入系统之前请先输入用户名和密码进行登录</div>
@@ -39,7 +40,8 @@
       <div>
         <el-button plain style="width: 270px" type="warning" @click="router.push('/register')">注册账号</el-button>
       </div>
-    </div>
+    </el-col>
+    <el-col :span="1"></el-col>
   </el-row>
 </template>
 

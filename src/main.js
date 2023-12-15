@@ -7,6 +7,9 @@ import router from './router'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import axios from "axios";
+import VueVirtualScroller from 'vue-virtual-scroller'
+
+
 
 const app = createApp(App)
 
@@ -16,6 +19,6 @@ app.use(ElementPlus, {
 })
 axios.defaults.baseURL = "https://www.ourcats.top:8080"
 axios.defaults.headers.common["Authorization"] = localStorage.getItem("SCHOOL_CAT_TOKEN")
-
+app.use(VueVirtualScroller)
 app.use(createPinia().use(piniaPluginPersistedstate))
 app.mount('#app')

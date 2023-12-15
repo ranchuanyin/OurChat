@@ -12,7 +12,7 @@
                 </el-col>
             </el-row>
         </el-col>
-        <el-col style="margin-top: 5vh">
+        <el-col style="margin-top: 5vh;padding: 5%">
             <el-form ref="formRef" :model="form" :rules="rules" @validate="onValidDate">
                 <el-form-item prop="username">
                     <el-input v-model="form.username" :maxlength="8" :minlength="2" placeholder="用户名" type="text">
@@ -67,15 +67,15 @@
                 </el-form-item>
             </el-form>
         </el-col>
-        <el-col style="margin-top: 5vh">
+        <el-col style="margin-top: 5vh;text-align: center">
             <el-row justify="space-between">
-                <el-col :span="5">
+                <el-col :span="8">
 
                 </el-col>
                 <el-col :span="8">
                     <el-button style="width: 10vw" type="warning" @click="register()">立即注册</el-button>
                 </el-col>
-                <el-col :span="5">
+                <el-col :span="8">
 
                 </el-col>
             </el-row>

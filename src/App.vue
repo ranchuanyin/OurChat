@@ -1,9 +1,12 @@
 <script setup>
 import {Close, FullScreen, Minus} from "@element-plus/icons-vue";
 import {onMounted} from "vue";
+import {useStore} from "@/stores";
+import router from "@/router";
+
 
 const { ipcRenderer } = require('electron');
-
+const store = useStore()
 onMounted(
     () => {
       var max = document.getElementById('max');
@@ -36,18 +39,18 @@ onMounted(
 </script>
 
 <template style="position: relative">
-  <div class="win-icon" id="min" style="right: 7vw;">
-    <el-icon style="left:20%;top:50%;">
+  <div class="win-icon icon-white" id="min" style="right: 6vw;text-align: center">
+    <el-icon >
       <Minus/>
     </el-icon>
   </div>
-  <div class="win-icon" id="max" style="right: 4vw;">
-    <el-icon style="left:20%;top:50%;">
+  <div class="win-icon icon-white" id="max" style="right: 3vw;text-align: center">
+    <el-icon >
       <FullScreen/>
     </el-icon>
   </div>
-  <div class="win-icon" id="close" style="right: 1vw;">
-    <el-icon style="left:20%;top:50%;">
+  <div class="win-icon icon-red" id="close" style="right: 0;text-align: center">
+    <el-icon >
       <Close/>
     </el-icon>
   </div>
@@ -65,11 +68,15 @@ body, html {
   padding: 0;
 }
 .win-icon{
-  width: 2vw;
+  height: 20px;
+  width: 30px;
   position: absolute;z-index: 5;top: 0;
   opacity: 0.8;
 }
-.win-icon:hover{
-  background-color: red;
+.icon-white:hover{
+  background-color: rgba(228, 228, 228, 0.76);
+}
+.icon-red:hover{
+  background-color: #ee0808;
 }
 </style>

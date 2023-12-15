@@ -12,13 +12,16 @@
     "electron:build": "vite build && electron-builder"
   },
   "dependencies": {
+    "async": "^3.2.5",
     "axios": "^1.6.2",
     "element-plus": "^2.4.3",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.0",
     "request": "^2.88.2",
+    "uuid": "^9.0.1",
     "vue": "^3.3.10",
     "vue-router": "^4.2.5",
+    "vue-virtual-scroller": "^2.0.0-beta.8",
     "vue3-emoji": "^2.0.0"
   },
   "devDependencies": {
@@ -49,6 +52,10 @@
       "dist/**/*",
       "electron/**/*"
     ],
+    "extraResources": {
+      "from": "./avatar/",
+      "to": "avatar"
+    },
     "directories": {
       "buildResources": "assets",
       "output": "dist_electron"

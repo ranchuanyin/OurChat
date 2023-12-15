@@ -26,8 +26,8 @@ function createWindow() {
 
     // 加载 index.html
     // mainWindow.loadFile('dist/index.html') 将该行改为下面这一行，加载url
-    mainWindow.loadURL(`file://${path.join(__dirname, '../dist/index.html')}`);
-    //mainWindow.loadURL('http://localhost:5173'); // 新增
+    //mainWindow.loadURL(`https://www.ourcatimg.top`);
+    mainWindow.loadURL('http://localhost:5173'); // 新增
     // 打开开发工具
     //这里改成自己的项目启动端口
 
@@ -61,7 +61,7 @@ function createTray() {
             label: '退出',
             click: () => {
                 tray.destroy();
-                app.quit()
+                app.exit()
             }
         }
     ]);
@@ -80,7 +80,7 @@ app.whenReady().then(() => {
         for (let i = 0; i < data.length; i++) {
             console.log(data[i])
             request(data[i]).pipe(
-                createWriteStream(path.join(__dirname, `avatar/${data[i].match(/\/([^\/?#]+)$/)[1]}`))
+                createWriteStream(path.join(__dirname, `../../avatar/${data[i].match(/\/([^\/?#]+)$/)[1]}`))
             )
         }
     })
@@ -92,7 +92,7 @@ app.whenReady().then(() => {
         count = 0
         if (process.platform === 'win32' || process.platform === 'win64') {
             tray.displayBalloon({
-                icon: path.join(__dirname, `avatar/${data.avatar.match(/\/([^\/?#]+)$/)[1]}`),
+                icon: path.join(__dirname, `../../avatar/${data.avatar.match(/\/([^\/?#]+)$/)[1]}`),
                 title: data.username,
                 content: data.message
             })
