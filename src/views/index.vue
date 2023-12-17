@@ -4,11 +4,10 @@
 
 <script setup>
 import "../assets/index.css"
-import {onMounted} from "vue";
+import {onMounted, watch} from "vue";
 import {useStore} from "@/stores"
 import {get} from "@/net";
 import Chat from "@/components/Chat.vue";
-import async from "async";
 
 const store = useStore();
 const messageList = store.messageList
@@ -20,20 +19,29 @@ let socket;
 
 onMounted(
     () => {
-      getFriendList()
-      websocketConnect()
+        getFriendList()
+        websocketConnect()
     }
 )
 
-function getFriendList(){
-  if (store.friendList.friendList != null) {
-    return;
-  }
-  get(`/cat/message/getFriendList/${store.auth.user.id}`, (data) => {
-    store.friendList.friendList = data.data
-    if (localStorage.getItem(`friendList:${store.auth.user.id}`) == null) {
-      let newArray = store.friendList.friendList.map(obj => obj.avatar);
-      ipcRenderer.send("avatarList", newArray)
+watch(
+    () => store.messageList.length,
+    () => {
+        if (store.messageList.length >= 100000) {
+            store.messageList.splice(0, 100)
+        }
+    }
+)
+
+function getFriendList() {
+    if (store.friendList.friendList != null) {
+        return;
+    }
+    get(`/cat/message/getFriendList/${store.auth.user.id}`, (data) => {
+        store.friendList.friendList = data.data
+        if (localStorage.getItem(`friendList:${store.auth.user.id}`) == null) {
+            let newArray = store.friendList.friendList.map(obj => obj.avatar);
+            ipcRenderer.send("avatarList", newArray)
       localStorage.setItem(`friendList:${store.auth.user.id}`, '1')
     }
   }, (data) => {

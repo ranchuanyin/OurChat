@@ -181,10 +181,6 @@ const getFriend = (one) => {
   showUserList.value = true
   showFriendList.value = false
 }
-
-const openFriend = () => {
-  ipcRenderer.send('open-friend-win')
-}
 </script>
 
 <style scoped>
