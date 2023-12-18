@@ -119,7 +119,7 @@ import router from "@/router";
 import {ElMessage} from "element-plus";
 import {get} from "@/net";
 import Friend from "@/components/Friend.vue";
-
+const emit = defineEmits(["closeWebSocket"])
 const store = useStore()
 const props = defineProps(["messageList"])
 const messageList = props.messageList
@@ -136,6 +136,7 @@ const showFriend = () => {
 const logout = () => {
   get('/cat/auth/logout', (data) => {
     localStorage.removeItem("SCHOOL_CAT_TOKEN")
+    emit("closeWebSocket")
     ElMessage.success(data.message)
     store.auth.user = null
     store.messageList.length = 0
