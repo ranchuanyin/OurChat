@@ -6,7 +6,17 @@
   -webkit-user-select: none;">
           <el-col style="height: 10%;-webkit-app-region: no-drag">
             <el-row justify="center">
-              <el-avatar :src="store.auth.user.avatar" style="margin-top: 35%" @click="logout()"/>
+              <el-popover
+                  :width="300"
+                  popper-style="box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 20px;"
+              >
+                <template #reference>
+                  <el-avatar :src="store.auth.user.avatar" style="margin-top: 35%"/>
+                </template>
+                <template #default>
+
+                </template>
+              </el-popover>
             </el-row>
           </el-col>
           <el-col style="height: 16%;-webkit-app-region: no-drag">
@@ -119,6 +129,7 @@ import router from "@/router";
 import {ElMessage} from "element-plus";
 import {get} from "@/net";
 import Friend from "@/components/Friend.vue";
+
 const emit = defineEmits(["closeWebSocket"])
 const store = useStore()
 const props = defineProps(["messageList"])

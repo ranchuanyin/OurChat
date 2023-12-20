@@ -2,6 +2,7 @@ const {app, BrowserWindow, Menu, Tray, ipcMain, nativeImage} = require('electron
 let request = require('request')
 const path = require('path')
 const {createWriteStream} = require("fs");
+const fs = require('fs');
 let mainWindow = null;
 let tray = null;
 let timer = null;
