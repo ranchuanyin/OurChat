@@ -7,10 +7,10 @@
     </el-row>
   </el-row>
   <el-divider style="margin: 0;"/>
-  <el-row justify="start" style="height: 60%;width: 100%">
+  <el-row justify="start" style="height: 60vh;width: 100%">
     <el-col>
-      <div ref="scrollContainer" style="height:350px;overflow-y: auto;">
-        <div v-for="one in message.message">
+      <div ref="scrollContainer" @wheel="handleScroll" style="height:60vh;overflow-y: auto;">
+        <div v-for="one in showMessage">
           <el-row v-if="one.fromUserId == user.id" style="margin: 2%">
             <el-col :span="2">
               <el-row justify="center">
@@ -22,9 +22,8 @@
                 <el-col>
                   <el-text>{{ one.messageUser }}</el-text>
                 </el-col>
-                <div v-if="one.type == 1"
+                <div v-if="one.type == 1" v-html="one.message"
                      style="background-color: white;padding: 8px;border-radius: 8px;max-width: 300px;">
-                  {{ one.message }}
                 </div>
                 <n-image v-else-if="one.type == 2"
                          :src="one.message"
@@ -35,10 +34,8 @@
           </el-row>
 
           <el-row v-else-if="one.toUserId == user.id" justify="end" style="margin: 2%">
-            <div v-if="one.type == 1"
+            <div v-if="one.type == 1" v-html="one.message"
                  style="background-color: white;padding: 8px;border-radius: 8px;max-width: 300px">
-              {{ one.message }}
-
             </div>
             <n-image v-else-if="one.type == 2"
                      :src="one.message"
@@ -54,9 +51,7 @@
       </div>
     </el-col>
   </el-row>
-
   <el-divider style="margin: 0;"/>
-
   <el-row v-show="appear" class="text-area" style="height: 25vh;padding: 5px">
     <el-col>
       <el-row>
@@ -73,7 +68,7 @@
             </el-icon>
           </el-upload>
         </el-col>
-        <el-col :span="1" >
+        <el-col :span="1">
           <V3Emoji
               size="small"
               @click-emoji="appendText"
@@ -84,14 +79,11 @@
       </el-row>
     </el-col>
     <el-col>
-      <el-input
-          v-model="messageContent"
-          :autosize="{ minRows: 3, maxRows: 4 }"
-          type="textarea"
-          style="height: 15vh"
-          @keydown.enter.native.prevent="handleEnterKey($event)"
-      />
+      <div @paste="handlePaste" id="editableDiv" class="div-text" ref="divText" @input="updateContent"
+           @keydown.enter.native.prevent="handleEnterKey($event)" contenteditable="true" style="height: 15vh;">
+      </div>
     </el-col>
+
   </el-row>
   <el-row justify="end" style="margin-top: 3px">
     <el-col :span="3">
@@ -116,7 +108,10 @@ import 'vue3-emoji/dist/style.css'
 const headerObj = {
   Authorization: localStorage.getItem("SCHOOL_CAT_TOKEN")
 }
-
+const showMessage = ref(null)
+const index = ref(2)
+const num = -10
+const divText = ref(null)
 const emit = defineEmits(['newMessage'])
 const appear = ref(false)
 const store = useStore()
@@ -129,7 +124,7 @@ const message = reactive({
   newMessage: ''
 })
 const appendText = (val) => {
-  messageContent.value += val;
+  divText.value.innerHTML += val;
 };
 
 class Message {
@@ -146,6 +141,10 @@ class Message {
 const messageContent = ref('')
 const scrollContainer = ref(null)
 messageList.value = props.messageList
+
+function updateContent(event) {
+  messageContent.value = event.target.innerHTML;
+}
 
 //监听messageList的值，如果改变，则滑动到最底下
 watch(() => messageList.value, () => {
@@ -184,12 +183,14 @@ const getMessageById = (id) => {
   if (message.message == null || message.message == '') {
     return
   }
+  index.value = 2
+  showMessage.value = message.message.slice(num)
   emit('newMessage', message.message.slice(-1)[0].message)
 }
 
 //---------------------------------发送信息----------------------------------
 const clickSendMessage = () => {
-  if (messageContent.value == null || messageContent.value == '') {
+  if (divText.value.innerHTML == null || divText.value.innerHTML == '') {
     ElMessage.warning("发送内容为空")
     return;
   }
@@ -197,13 +198,13 @@ const clickSendMessage = () => {
     let find = store.friendList.friendList.find(one => one.id == user.id);
     store.userList.userList.push(find)
   }
-  let message = messageContent.value
-  console.log(message)
-  const sendMessage = new Message(store.auth.user.id, user.id, messageContent.value, 1);
+  let message = messageContent.value.replace(/<img/g, '<img style="width:300px;height:auto"');
+  const sendMessage = new Message(store.auth.user.id, user.id, message, 1);
   messageList.value.push(sendMessage)
   messageContent.value = ''
+  divText.value.innerHTML = null
   let one = store.userList.userList.find(one => one.id == user.id.toString())
-  one.newMessage = message
+  one.newMessage = message.replace(/<img[^>]*>/g, '图片')
   one.newMessageName = ''
   if (user.isGroup == false) {
     postJson('/cat/message/pushOne', {
@@ -283,6 +284,88 @@ function handleEnterKey(e) {
     clickSendMessage();
   }
 }
+
+function handlePaste(event) {
+  // 阻止默认粘贴行为，以便我们能够处理粘贴的内容
+  event.preventDefault();
+
+  // 获取粘贴板的数据
+  const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+
+  // 遍历处理粘贴的每一项
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    console.log(item)
+    // 如果是文件类型
+    if (item.kind === 'file' && item.type.includes('image')) {
+      const blob = item.getAsFile();
+      convertBlobToDataURL(blob, (dataURL) => {
+        const img = new Image();
+        img.src = dataURL;
+        img.style.maxWidth = '100px';
+        img.style.height = 'auto';
+        divText.value.appendChild(img);
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
+
+        // 插入处理过的图片到可编辑div中
+        range.insertNode(img);
+
+        // 将光标移动到插入图片的后面
+        range.setStartAfter(img);
+        range.setEndAfter(img);
+
+        // 更新Selection对象
+        selection.removeAllRanges();
+        selection.addRange(range);
+        messageContent.value = event.target.innerHTML;
+      })
+    } else if (item.kind === 'string' && item.type === 'text/plain') {
+      // 如果是纯文本，可以在这里进行处理
+      const text = event.clipboardData.getData('text/plain');
+
+      // 在这里处理纯文本粘贴的情况
+      divText.value.innerHTML += text
+      messageContent.value = event.target.innerHTML;
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(divText.value);
+      range.collapse(false); // 将光标移到范围的末尾
+
+      // 更新Selection对象
+      selection.removeAllRanges();
+      selection.addRange(range);
+
+    }
+  }
+}
+
+function convertBlobToDataURL(blob, callback) {
+  const reader = new FileReader();
+  reader.onloadend = function () {
+    callback(reader.result);
+  };
+  reader.readAsDataURL(blob);
+}
+
+function handleScroll(event) {
+  // 获取滚动距离
+
+  const scrollTop = scrollContainer.value.scrollTop;
+  const deltaY = event.deltaY;
+  // 判断是否有整数倍的滚动距离
+  if ((Math.abs(scrollTop % 200) < 10 )) {
+    // 执行你的方法
+    if(deltaY < 0){
+      doSomethingOnScroll();
+    }
+  }
+}
+function doSomethingOnScroll() {
+  // 在这里执行滚动时要执行的操作
+  showMessage.value = message.message.slice(num * index.value)
+  index.value++
+}
 </script>
 
 <style scoped>
@@ -294,18 +377,17 @@ function handleEnterKey(e) {
   width: 12px;
 }
 
-:deep(.el-textarea__inner) {
-  border: 0;
-  resize: none;
-  background-color:#f0f0f0;
+.div-text {
+  border: none;
+  padding: 10px;
+  min-height: 50px;
+  cursor: text;
+  outline: none;
+  overflow: auto;
 }
-:deep(.el-textarea__inner) {
-  box-shadow: 0 0 0 0px;
-}
-:deep(.el-textarea__inner:hover) {
-  box-shadow: 0 0 0 0px;
-}
-:deep(.el-textarea__inner:focus) {
-  box-shadow: 0 0 0 0px;
+
+img {
+  width: 300px;
+  height: 300px;
 }
 </style>

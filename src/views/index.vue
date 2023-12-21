@@ -86,7 +86,7 @@ const websocketConnect = () => {
               if (message.type == 2) {
                 one.newMessage = '图片'
               } else
-                one.newMessage = message.message
+                one.newMessage = message.message.replace(/<img[^>]*>/g, '图片')
               ipcRenderer.send('vue-message', {
                 avatar: one.avatar,
                 username: one.username,
@@ -101,7 +101,7 @@ const websocketConnect = () => {
             if (message.type == 2) {
               one.newMessage = '图片'
             } else
-              one.newMessage = message.message
+              one.newMessage = message.message.replace(/<img[^>]*>/g, '图片')
             ipcRenderer.send('vue-message', {
               avatar: one.avatar,
               username: one.username,
@@ -115,7 +115,7 @@ const websocketConnect = () => {
           if (message.type == 2) {
             one.newMessage = '图片'
           } else
-            one.newMessage = message.message
+            one.newMessage = message.message.replace(/<img[^>]*>/g, '图片')
           ipcRenderer.send('vue-message', {
             avatar: one.avatar,
             username: one.username,
@@ -150,7 +150,7 @@ const closeWebSocket = () => {
   socket.close()
 }
 
-async function getMessage() {
+function getMessage() {
   get(`/cat/auth/message/${store.auth.user.id}`, (dataF) => {
     for (let i = 0; i < dataF.data.length; i++) {
       if (!store.userList.userList.some(one => one.id == dataF.data[i].fromUserId)) {
@@ -184,12 +184,7 @@ async function getMessage() {
             if (dataF.data[i].type == 2) {
               one.newMessage = '图片'
             } else
-              one.newMessage = dataF.data[i].message
-            ipcRenderer.send('vue-message', {
-              avatar: one.avatar,
-              username: one.username,
-              message: one.newMessage
-            })
+              one.newMessage = dataF.data[i].message.replace(/<img[^>]*>/g, '图片')
             one.newMessageName = dataF.data[i].messageUser
           })
         } else {
@@ -199,12 +194,7 @@ async function getMessage() {
           if (dataF.data[i].type == 2) {
             one.newMessage = '图片'
           } else
-            one.newMessage = dataF.data[i].message
-          ipcRenderer.send('vue-message', {
-            avatar: one.avatar,
-            username: one.username,
-            message: one.newMessage
-          })
+            one.newMessage = dataF.data[i].message.replace(/<img[^>]*>/g, '图片')
           one.newMessageName = dataF.data[i].messageUser
         }
       } else {
@@ -213,12 +203,7 @@ async function getMessage() {
         if (dataF.data[i].type == 2) {
           one.newMessage = '图片'
         } else
-          one.newMessage = dataF.data[i].message
-        ipcRenderer.send('vue-message', {
-          avatar: one.avatar,
-          username: one.username,
-          message: one.newMessage
-        })
+          one.newMessage = dataF.data[i].message.replace(/<img[^>]*>/g, '图片')
         one.newMessageName = dataF.data[i].messageUser
       }
     }

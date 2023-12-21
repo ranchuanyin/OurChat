@@ -14,7 +14,8 @@
                   <el-avatar :src="store.auth.user.avatar" style="margin-top: 35%"/>
                 </template>
                 <template #default>
-
+                  <el-button type="danger" @click="logout">退出登录</el-button>
+                  <el-button type="success" @click="deleteCache">删除缓存</el-button>
                 </template>
               </el-popover>
             </el-row>
@@ -150,11 +151,15 @@ const logout = () => {
     emit("closeWebSocket")
     ElMessage.success(data.message)
     store.auth.user = null
-    store.messageList.length = 0
-    store.userList.userList.length = 0
-    store.friendList.friendList.length = 0
     router.push('/')
   })
+}
+
+const deleteCache = () => {
+  store.messageList.length = 0
+  store.userList.userList.length = 0
+  store.friendList.friendList.length = 0
+  localStorage.removeItem(`friendList:${store.auth.user.id}`)
 }
 
 const showUser = () => {
